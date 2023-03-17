@@ -15,9 +15,9 @@ for fun project, and it works (on my machine) :D
 
 ## Demo
 
-This was the first iteration of it (August '21), it's way more sensitive now and does not make such
+This was the first iteration of it (Maz '22), it's way more sensitive now and does not make such
 abrupt movements anymore. But see
-yourself: [Demo Video](https://1drv.ms/v/s!ApTlIRJaAWv_g9c7QySgJX05nqCdQg)
+yourself: [Demo Video](https://1drv.ms/v/s!ApTlIRJaAWv_hIA4U85A6o8t-TlFZw?e=KrNYF5)
 
 ## Note
 
