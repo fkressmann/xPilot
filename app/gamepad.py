@@ -1,6 +1,5 @@
 import time
 import queue
-import math
 import evdev
 import threading
 
@@ -8,6 +7,7 @@ from pypilot.client import pypilotClient
 
 CENTER = 1001
 STOP = 0
+
 
 def detect_gamepad() -> evdev.InputDevice:
     devices = [evdev.InputDevice(path) for path in evdev.list_devices()]
@@ -39,7 +39,6 @@ class ReaderThread(threading.Thread):
         self.setDaemon(True)
 
     def run(self):
-        previous_offset_from_0 = 0
         print("Starting reader thread")
         for event in self.gamepad.read_loop():
             if event.type == evdev.ecodes.EV_ABS and event.code == evdev.ecodes.ABS_RX:
@@ -47,15 +46,11 @@ class ReaderThread(threading.Thread):
                 if self.queue_enabled:
                     if event.value == 128:
                         print("Idle mode, joystick in home position, sending 0")
-                        previous_offset_from_0 = 0
                         self.queue.queue.clear()
                         self.queue.put(STOP)
-                        # continue
-                    normalized = event.value / 32768 / -2
-                    offset_from_0 = math.fabs(normalized)
-                    if offset_from_0 > previous_offset_from_0:
-                        self.queue.put(normalized)
-                        previous_offset_from_0 = offset_from_0
+                        continue
+                    normalized = event.value / -32768
+                    self.queue.put(normalized)
             elif event.type == evdev.ecodes.EV_KEY and event.code == evdev.ecodes.BTN_SOUTH and event.value == 1:
                 print("Button A pressed", "Going to 0")
                 self.queue.put(CENTER)
@@ -94,10 +89,10 @@ class WorkerThread(threading.Thread):
                 else:
                     print(f"Sending new command: {new_command}")
                     self.send_servo_command(new_command)
-                    # while self.queue.empty():
-                    #     print(f"Repeating command: {new_command}")
-                    #     self.send_to_pypilot(new_command)
-                    #     time.sleep(0.5)
+                    while self.queue.empty():
+                        print(f"Repeating command: {new_command}")
+                        self.send_servo_command(new_command)
+                        time.sleep(0.5)
             except queue.Empty:
                 pass
 
@@ -112,3 +107,9 @@ class WorkerThread(threading.Thread):
     def stop(self):
         print("Stopping worker thread...")
         self.stopped = True
+
+
+if __name__ == '__main__':
+    pypilot = pypilotClient(lambda x: x)
+    d = detect_gamepad()
+    command_queue = queue.Queue()

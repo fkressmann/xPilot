@@ -2,7 +2,6 @@ import wx
 from pypilot.client import pypilotClient
 
 from gamepad import detect_gamepad, ReaderThread, WorkerThread
-import threading
 import queue
 
 
@@ -14,7 +13,7 @@ class MyApp(wx.App):
         self.InitFrame(pypilot)
 
     def InitFrame(self, pypilot):
-        frame = MyFrame(parent=None, title="xPilot 2021", pos=(100, 100))
+        frame = MyFrame(parent=None, title="xPilot", pos=(100, 100))
         frame.Show()
 
 
@@ -33,7 +32,7 @@ class MyFrame(wx.Frame):
 class MyPanel(wx.Panel):
     def __init__(self, parent):
         super().__init__(parent=parent)
-        welcome = wx.StaticText(self, label="xPilot for pyPilot 0.16 by Felix K. 2021", pos=(20, 20))
+        welcome = wx.StaticText(self, label="xPilot for pyPilot 0.17 by Felix K. 2024", pos=(20, 20))
         self.gamepad_text = wx.StaticText(self, label="Detecting Gamepad...", pos=(20, 50))
         self.slider = wx.Slider(self, value=0, minValue=-32768, maxValue=32767, style=wx.SL_HORIZONTAL | wx.SL_LABELS)
         self.button = wx.Button(parent=self, label='Enable xPilot', pos=(20, 120))
